@@ -9,7 +9,7 @@ team("AXIS").
 type("CLASS_FIELDOPS").
 
 // Value of "closeness" to the Flag, when patrolling in defense
-patrollingRadius(64).
+patrollingRadius(40).
 
 
 
@@ -41,55 +41,89 @@ patrollingRadius(64).
  *
  */
 +!get_agent_to_aim
-    <-  ?debug(Mode); if (Mode<=2) { .println("Looking for agents to aim."); }
-        ?fovObjects(FOVObjects);
-        .length(FOVObjects, Length);
-        
-        ?debug(Mode); if (Mode<=1) { .println("El numero de objetos es:", Length); }
-        
-        if (Length > 0) {
-		    +bucle(0);
-    
-            -+aimed("false");
-    
-            while (aimed("false") & bucle(X) & (X < Length)) {
+  <-
+  ?debug(Mode); if (Mode<=2) { .println("Looking for agents to aim."); }
+  ?fovObjects(FOVObjects);
+  .length(FOVObjects, Length);
   
-                //.println("En el bucle, y X vale:", X);
-                
-                .nth(X, FOVObjects, Object);
-                // Object structure 
-                // [#, TEAM, TYPE, ANGLE, DISTANCE, HEALTH, POSITION ]
-                .nth(2, Object, Type);
-                
-                ?debug(Mode); if (Mode<=2) { .println("Objeto Analizado: ", Object); }
-                
-                if (Type > 1000) {
-                    ?debug(Mode); if (Mode<=2) { .println("I found some object."); }
-                } else {
-                    // Object may be an enemy
-                    .nth(1, Object, Team);
-                    ?my_formattedTeam(MyTeam);
-          
-                    if (Team == 100) {  // Only if I'm AXIS
-				
- 					    ?debug(Mode); if (Mode<=2) { .println("Aiming an enemy. . .", MyTeam, " ", .number(MyTeam) , " ", Team, " ", .number(Team)); }
-					    +aimed_agent(Object);
-                        -+aimed("true");
+  ?debug(Mode); if (Mode<=1) { .println("El numero de objetos es:", Length); }
+  
+  if (Length > 0) {
+    +bucle(0);
+    -+aimed("false");
 
-                    }
-                    
+    while (aimed("false") & bucle(X) & (X < Length)) {
+      //.println("En el bucle, y X vale:", X);
+      
+      .nth(X, FOVObjects, Object);
+      // Object structure 
+      // [#, TEAM, TYPE, ANGLE, DISTANCE, HEALTH, POSITION ]
+      .nth(2, Object, Type);
+      
+      ?debug(Mode); if (Mode<=2) { .println("Objeto Analizado: ", Object); }
+      
+      if (Type > 1000) {
+          ?debug(Mode); if (Mode<=2) { .println("I found some object."); }
+      } else {
+        // Object may be an enemy
+        .nth(1, Object, Team);
+        ?my_formattedTeam(MyTeam);
+        +found("true");
+        if (Team == 100) {  // Only if I'm AXIS
+          +bucle2(0);
+          .println("In get");
+          while (bucle2(Y) & (Y < Length) & found(Puedo) & Puedo == "true" ){
+            .println("In bucle");
+            .nth(Y, FOVObjects, Object2);
+            .nth(2, Object2, Type2);
+            if (Type2 < 1000){
+              .nth(1, Object2, Team2);
+              //.nth(3, Object, Angle1);
+              //.nth(3, Object2, Angle2);
+              .nth(6, Object, Pos1);
+              .nth(6, Object2, Pos2);
+              +posiT(Pos1);
+              +posiT2(Pos2);
+              if (Team2 == 200){
+                //if (Angle1 == Angle2)
+                //{
+                //  -+found("false");
+                //}
+                -+posiT(Pos1);
+                .println("Pos1",Pos1);
+                ?posiT(pos( A1, B1, C1));
+                
+                -+posiT2(Pos2);
+                .println("Pos2",Pos2);
+                ?posiT2(pos( A2, B2, C2));
+              
+                if ( A1 == A1){
+                  -+found("false");
                 }
-             
-                -+bucle(X+1);
-                
+              }
             }
-                     
-         
+            .println("A1 ",A1);
+            .println("A2 ",A2);
+            .println("Puedo ",Puedo);
+            -+bucle2(Y+1);
+          }
+          -posiT(_);
+          -posiT2(_);
+          ?found(Puedo);
+          .println("Puedo final",Puedo);
+          if (Puedo == "true") { 
+            .println("Aiming an enemy. . .", MyTeam, " ", .number(MyTeam) , " ", Team, " ", .number(Team)); 
+            +aimed_agent(Object);
+            -+aimed("true");
+          }
+          -bucle2(_);
         }
-
-     -bucle(_).
-
-        
+        -found(_);
+      }
+      -+bucle(X+1);   
+    }
+  }
+  -bucle(_).
 
 /////////////////////////////////
 //  LOOK RESPONSE
@@ -157,10 +191,21 @@ patrollingRadius(64).
         if(Team==100){
           .println("Veo un enemigo, a por el");
           .nth(6, Object, pos(X,Y,Z));
-          !add_task ( task ( 2999 , "TASK_GOTO_POSITION_2" , M , pos(X,Y,Z), "" ) ) ;
-          .my_team("AXIS", A);
-          .concat("enemigo_cerca(",X, ", ", Y, ", ", Z, ")", Content1);
-          .send_msg_with_conversation_id(A, tell, Content1, "INT");
+          -task(_, _, _, _, _);
+          check_position(pos(X,Y,Z-2));
+          if(position("valid")){
+            !add_task ( task ( 2999 , "TASK_GOTO_POSITION_2" , M , pos(X,Y,Z-2), "" ) ) ;
+            .my_team("AXIS", A);
+            .concat("enemigo_cerca(",X, ", ", Y, ", ", Z-2, ")", Content1);
+            .send_msg_with_conversation_id(A, tell, Content1, "INT");
+          }
+          else{
+            !add_task ( task ( 2999 , "TASK_GOTO_POSITION_2" , M , pos(X,Y,Z), "" ) ) ;
+            .my_team("AXIS", A);
+            .concat("enemigo_cerca(",X, ", ", Y, ", ", Z, ")", Content1);
+            .send_msg_with_conversation_id(A, tell, Content1, "INT");
+          }
+          
         }
         -+contador(Cont+1);
       }
@@ -308,7 +353,9 @@ patrollingRadius(64).
 /////////////////////////////////
 +enemigo_cerca(X,Y,Z)[source(A)]
   <-
-  !add_task(task(1750, "TASK_GOTO_POSITION", A, pos(X, Y, Z), ""));
+  //?current_task(task(C_priority, _, _, _, _));
+  -task(1999, _, _, _, _);
+  !add_task(task(1999, "TASK_GOTO_POSITION", A, pos(X, Y, Z), ""));
   -+state(standing);
   -goto(_,_,_).  
 
