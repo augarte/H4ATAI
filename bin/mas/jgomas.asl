@@ -700,17 +700,6 @@ current_task(nil).
     -cfh(_)[source(_)];
      -+state(standing).
 
-
-
-
-
-
-
-
-
-
-
-
 /////////////////////////////////
 //  ATENDER PETICION CALL FOR MEDIC  (SOLO MEDICOS)
 /////////////////////////////////
@@ -725,9 +714,7 @@ current_task(nil).
                                            .concat("cfm_agree", Content);
                                            .send_msg_with_conversation_id(M, tell, Content, "CFM");
  					        -+state(standing);
-
         } else {
-
          //.send(M, tell, "cfm_refuse");
          .concat("cfm_refuse", Content);
          .send_msg_with_conversation_id(M, tell, Content, "CFM");
@@ -735,7 +722,6 @@ current_task(nil).
         }
 
         -cfm(_)[source(M)].
-
 
 /////////////////////////////////
 //  ATENDER PETICION CALL FOR AMMO  (SOLO FIELDOPS)

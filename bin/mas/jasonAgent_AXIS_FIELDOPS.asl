@@ -9,16 +9,11 @@ team("AXIS").
 type("CLASS_FIELDOPS").
 
 // Value of "closeness" to the Flag, when patrolling in defense
-patrollingRadius(40).
-
-
-
+patrollingRadius(10).
 
 { include("jgomas.asl") }
 
-
 // Plans
-
 
 /*******************************
 *
@@ -382,5 +377,14 @@ patrollingRadius(40).
 /////////////////////////////////
 
 +!init
-   <- ?debug(Mode); if (Mode<=1) { .println("YOUR CODE FOR init GOES HERE.")}.  
+   <- ?debug(Mode); if (Mode<=1) { .println("YOUR CODE FOR init GOES HERE.")}
+   .my_name(A);
+  
+   if( .substring("TF1", A) ){
+   -+objective(208, 0, 200);
+   }
+   if( .substring("TF2", A) ){
+   -+objective(208, 0, 250);
+   }
+   .  
 
