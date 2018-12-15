@@ -413,9 +413,5 @@ patrollingRadius(10).
    if( .substring("TS3", A) ){
    -+objective(208, 0, 250);
    }
-   
-   /*else{
-    !add_task ( task ( 1750 , "TASK_PATROLLING" , M , pos(230,0,230), "" ) ) ;
-   }*/
    .  
 
