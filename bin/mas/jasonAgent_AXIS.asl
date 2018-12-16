@@ -9,7 +9,7 @@ team("AXIS").
 type("CLASS_SOLDIER").
 
 // Value of "closeness" to the Flag, when patrolling in defense
-patrollingRadius(10).
+patrollingRadius(1).
 
 { include("jgomas.asl") }
 
@@ -67,9 +67,7 @@ patrollingRadius(10).
         +found("true");
         if (Team == 100) {  // Only if I'm AXIS
           +bucle2(0);
-          .println("In get");
           while (bucle2(Y) & (Y < Length) & found(Puedo) & Puedo == "true" ){
-            .println("In bucle");
             .nth(Y, FOVObjects, Object2);
             .nth(2, Object2, Type2);
             if (Type2 < 1000){
@@ -86,11 +84,9 @@ patrollingRadius(10).
                 //  -+found("false");
                 //}
                 -+posiT(Pos1);
-                .println("Pos1",Pos1);
                 ?posiT(pos( A1, B1, C1));
                 
                 -+posiT2(Pos2);
-                .println("Pos2",Pos2);
                 ?posiT2(pos( A2, B2, C2));
               
                 if ( A1 == A1){
@@ -98,15 +94,11 @@ patrollingRadius(10).
                 }
               }
             }
-            .println("A1 ",A1);
-            .println("A2 ",A2);
-            .println("Puedo ",Puedo);
             -+bucle2(Y+1);
           }
           -posiT(_);
           -posiT2(_);
           ?found(Puedo);
-          .println("Puedo final",Puedo);
           if (Puedo == "true") { 
             .println("Aiming an enemy. . .", MyTeam, " ", .number(MyTeam) , " ", Team, " ", .number(Team)); 
             +aimed_agent(Object);
@@ -177,32 +169,26 @@ patrollingRadius(10).
  *
  */
 +!perform_look_action 
-  <-?fovObjects(FOVObjects);
+  <-
+    -+enemigoVisto(0);
+    ?fovObjects(FOVObjects);
     .length(FOVObjects, Cuantos);
     if (Cuantos > 0){
       -+contador(0);
-      while (contador(Cont) & (Cont < Cuantos)){
+      while (contador(Cont) & (Cont < Cuantos) & enemigoVisto(0)){
         .nth(Cont, FOVObjects, Object);
         .nth(1, Object, Team);
         .nth(2, Object, Type);
         if(Team==100){
-          .println("Veo un enemigo, a por el");
           .nth(6, Object, pos(X,Y,Z));
           -task(_, _, _, _, _);
-          check_position(pos(X,Y,Z-2));
-          if(position("valid")){
-            !add_task ( task ( 2999 , "TASK_GOTO_POSITION_2" , M , pos(X,Y,Z-2), "" ) ) ;
-            .my_team("AXIS", A);
-            .concat("enemigo_cerca(",X, ", ", Y, ", ", Z-2, ")", Content1);
-            .send_msg_with_conversation_id(A, tell, Content1, "INT");
-          }
-          else{
-            !add_task ( task ( 2999 , "TASK_GOTO_POSITION_2" , M , pos(X,Y,Z), "" ) ) ;
-            .my_team("AXIS", A);
-            .concat("enemigo_cerca(",X, ", ", Y, ", ", Z, ")", Content1);
-            .send_msg_with_conversation_id(A, tell, Content1, "INT");
-          }
           
+          !add_task ( task ( 2999 , "TASK_GOTO_POSITION" , M , pos(X,Y,Z), "" ) ) ;
+          .my_team("AXIS", A);
+          .concat("enemigo_cerca(",X, ", ", Y, ", ", Z, ")", Content1);
+          .send_msg_with_conversation_id(A, tell, Content1, "INT");
+          
+          -+enemigoVisto(1);
         }
         -+contador(Cont+1);
       }
@@ -373,10 +359,23 @@ patrollingRadius(10).
   <-
   //?current_task(task(C_priority, _, _, _, _));
   -task(1999, _, _, _, _);
-  !add_task(task(1999, "TASK_GOTO_POSITION", A, pos(X, Y, Z), ""));
-  -+state(standing);
-  -goto(_,_,_).  
+  !add_task(task(1999, "TASK_GOTO_POSITION", A, pos(X, Y, Z), "")).
+  //-+state(standing);
+  //-goto(_,_,_).  
    
++sigueme(SubTeam, X, Z)[source(A)]
+  <-
+  ?subteam(S);
+  if(SubTeam==S){
+    -task(1999, _, _, _, _);
+    check_position(pos(X+2,0,Z-2));
+      if(position(valid)){
+        !add_task(task(3000, "TASK_GOTO_POSITION", A, pos(X+2, 0, Z-2), ""));
+      }
+      else{
+        !add_task(task(3000, "TASK_GOTO_POSITION", A, pos(X, 0, Z), ""));
+      }
+  }.
     
 +cfm_agree[source(M)]
    <- ?debug(Mode); if (Mode<=1) { .println("YOUR CODE FOR cfm_agree GOES HERE.")};
@@ -401,17 +400,21 @@ patrollingRadius(10).
 /////////////////////////////////
 
 +!init
-   <- ?debug(Mode); if (Mode<=1) { .println("YOUR CODE FOR init GOES HERE.")}
-   .my_name(A);
+  <- ?debug(Mode); if (Mode<=1) { .println("YOUR CODE FOR init GOES HERE.")}
+  +enemigoVisto(0);
+
+  .my_name(A);
   
 	if( .substring("TS1", A) ){
-   -+objective(208, 0, 200);
-   }
-   if( .substring("TS2", A) ){
-   -+objective(208, 0, 200);
-   }
-   if( .substring("TS3", A) ){
-   -+objective(208, 0, 250);
-   }
-   .  
+    -+objective(235, 0, 220);
+    +subteam(1);
+  }
+  if( .substring("TS2", A) ){
+    -+objective(230, 0, 225);
+    +subteam(1);
+  }
+  if( .substring("TS3", A) ){
+    -+objective(235, 0, 230);
+    +subteam(2);
+  }.  
 
