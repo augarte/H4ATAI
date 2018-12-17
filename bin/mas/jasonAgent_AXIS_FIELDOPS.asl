@@ -392,7 +392,7 @@ patrollingRadius(1).
 
 +!init
   <- ?debug(Mode); if (Mode<=1) { .println("YOUR CODE FOR init GOES HERE.")}
-  +st(1);
+  +st(4);
   +enemigoVisto(0);
   .my_name(A);
   
@@ -410,7 +410,7 @@ patrollingRadius(1).
     -+objective(210, 0, 250);
     }
      if( st(4) ){
-	!add_task ( task ( 1999 , "TASK_PATROLLING" , A , pos(200, 0, 230), "" ) ) ;
+	!add_task ( task ( 1999 , "TASK_PATROLLING" , A , pos(200, 0, 130), "" ) ) ;
     -+objective(200, 0, 230);
     }
     +subteam(1);
