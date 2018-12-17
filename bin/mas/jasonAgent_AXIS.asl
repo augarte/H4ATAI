@@ -427,7 +427,7 @@ patrollingRadius(1).
 
 +!init
   <- ?debug(Mode); if (Mode<=1) { .println("YOUR CODE FOR init GOES HERE.")}
-  +st(4);
+  +st(1);
   +enemigoVisto(0);
   +war(false);
   .my_name(A);
