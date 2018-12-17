@@ -407,9 +407,17 @@ patrollingRadius(1).
 	!add_task ( task ( 1999 , "TASK_PATROLLING" , A , pos(120, 0, 210), "" ) ) ;
     -+objective(120, 0, 210);
     }
+   	if( st(2) ){
+			!add_task ( task ( 1998 , "TASK_PATROLLING" , M , pos(45, 0, 210), "" ) ) ;
+    	 	-+objective(45, 0, 200);
+    		 }
     if( st(3) ){
 	!add_task ( task ( 1999 , "TASK_PATROLLING" , A , pos(120, 0, 250), "" ) ) ;
     -+objective(210, 0, 250);
+    }
+     if( st(4) ){
+	!add_task ( task ( 1999 , "TASK_PATROLLING" , A , pos(200, 0, 230), "" ) ) ;
+    -+objective(200, 0, 230);
     }
     +subteam(1);
   }
