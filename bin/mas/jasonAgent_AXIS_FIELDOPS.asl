@@ -205,11 +205,12 @@ patrollingRadius(1).
           	-+war(true);
           }else{
           	.my_name(M);
+          	if( st(2) ){
           	if( .substring("TF1", M) ){
 			!add_task ( task ( 1999 , "TASK_PATROLLING" , M , pos(45, 0, 210), "" ) ) ;
-    	 	-+objective(55, 0, 200);
+    	 	-+objective(45, 0, 210);
     		 }
-    		
+    		}
           }
         	}
         }
@@ -391,13 +392,19 @@ patrollingRadius(1).
 
 +!init
   <- ?debug(Mode); if (Mode<=1) { .println("YOUR CODE FOR init GOES HERE.")}
+  +st(1);
   +enemigoVisto(0);
-
   .my_name(A);
   
   if( .substring("TF1", A) ){
-  	!add_task ( task ( 1999 , "TASK_PATROLLING" , A , pos(120, 0, 210), "" ) ) ;
-    -+objective(125, 0, 210);
+  		if( st(1) ){
+	!add_task ( task ( 1999 , "TASK_PATROLLING" , A , pos(120, 0, 210), "" ) ) ;
+    -+objective(120, 0, 210);
+    }
+    if( st(3) ){
+	!add_task ( task ( 1999 , "TASK_PATROLLING" , A , pos(120, 0, 250), "" ) ) ;
+    -+objective(210, 0, 250);
+    }
     +subteam(1);
   }
   if( .substring("TF2", A) ){
