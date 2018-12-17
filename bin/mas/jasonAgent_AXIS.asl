@@ -170,6 +170,9 @@ patrollingRadius(1).
  */
 +!perform_look_action 
   <-
+  
+   		
+  
     -+enemigoVisto(0);
     ?fovObjects(FOVObjects);
     .length(FOVObjects, Cuantos);
@@ -179,20 +182,45 @@ patrollingRadius(1).
         .nth(Cont, FOVObjects, Object);
         .nth(1, Object, Team);
         .nth(2, Object, Type);
+       ?my_ammo_threshold(At);
+       ?my_ammo(Ar);
         if(Team==100){
           .nth(6, Object, pos(X,Y,Z));
           -task(_, _, _, _, _);
-          
           !add_task ( task ( 2999 , "TASK_GOTO_POSITION" , M , pos(X,Y,Z), "" ) ) ;
           .my_team("AXIS", A);
           .concat("enemigo_cerca(",X, ", ", Y, ", ", Z, ")", Content1);
           .send_msg_with_conversation_id(A, tell, Content1, "INT");
           
           -+enemigoVisto(1);
+        
+        }else{
+        ?my_ammo_threshold(At2);
+       	?my_ammo(Ar2);
+        	if(At < At2 & Ar == Ar2){
+        		.println("ENEMIGO ALREDEDOR !!!!!!!!!!!!");
+            ?my_position(mX, mY, mZ);
+        	!add_task ( task ( 2999 , "TASK_PATROLLING" , M , pos(mX, mY, mZ), "" ) ) ;
+        	}else{
+        		  if( war(false) ){
+          	-+war(true);
+          }else{
+          	.my_name(M);
+          	if( .substring("TS1", M) ){
+			!add_task ( task ( 1998 , "TASK_PATROLLING" , M , pos(45, 0, 210), "" ) ) ;
+    	 	-+objective(55, 0, 200);
+    		 }
+//    		 if( .substring("TS2", M) ){
+//			!add_task ( task ( 1999 , "TASK_PATROLLING" , M , pos(50, 0, 200), "" ) ) ;
+//    	 	-+objective(80, 0, 200);
+//    		 }
+          }
+        	}
         }
         -+contador(Cont+1);
       }
-    }.
+    }
+    .
 /**
  * Action to do if this agent cannot shoot.
  *
@@ -370,10 +398,10 @@ patrollingRadius(1).
     -task(1999, _, _, _, _);
     check_position(pos(X+2,0,Z-2));
       if(position(valid)){
-        !add_task(task(3000, "TASK_GOTO_POSITION", A, pos(X+2, 0, Z-2), ""));
+        !add_task(task(2000, "TASK_GOTO_POSITION", A, pos(X+2, 0, Z-2), ""));
       }
       else{
-        !add_task(task(3000, "TASK_GOTO_POSITION", A, pos(X, 0, Z), ""));
+        !add_task(task(2000, "TASK_GOTO_POSITION", A, pos(X, 0, Z), ""));
       }
   }.
     
@@ -402,19 +430,21 @@ patrollingRadius(1).
 +!init
   <- ?debug(Mode); if (Mode<=1) { .println("YOUR CODE FOR init GOES HERE.")}
   +enemigoVisto(0);
-
+  +war(false);
   .my_name(A);
   
 	if( .substring("TS1", A) ){
-    -+objective(235, 0, 220);
+	!add_task ( task ( 1999 , "TASK_PATROLLING" , A , pos(120, 0, 210), "" ) ) ;
+    -+objective(120, 0, 210);
     +subteam(1);
   }
   if( .substring("TS2", A) ){
-    -+objective(230, 0, 225);
+  	!add_task ( task ( 1999 , "TASK_PATROLLING" , A , pos(218, 0, 170), "" ) ) ;
+    -+objective(125, 0, 208);
     +subteam(1);
   }
   if( .substring("TS3", A) ){
-    -+objective(235, 0, 230);
+    -+objective(210, 0, 210);
     +subteam(2);
   }.  
 

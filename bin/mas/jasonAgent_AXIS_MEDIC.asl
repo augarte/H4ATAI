@@ -187,6 +187,24 @@ patrollingRadius(1).
           .send_msg_with_conversation_id(A, tell, Content1, "INT");
         
           -+enemigoVisto(1);
+        }else{
+        ?my_ammo_threshold(At2);
+       	?my_ammo(Ar2);
+        	if(At < At2 & Ar == Ar2){
+        		.println("ENEMIGO ALREDEDOR !!!!!!!!!!!!");
+            ?my_position(mX, mY, mZ);
+        	!add_task ( task ( 2999 , "TASK_PATROLLING" , M , pos(mX, mY, mZ), "" ) ) ;
+        	}else{
+        		  if( war(false) ){
+          	-+war(true);
+          }else{
+          	.my_name(M);
+          	if( .substring("TM1", M) ){
+			!add_task ( task ( 1999 , "TASK_PATROLLING" , M , pos(45, 0, 210), "" ) ) ;
+    	 	-+objective(55, 0, 200);
+    		 }
+          }
+        	}
         }
         -+contador(Cont+1);
       }
@@ -347,10 +365,10 @@ patrollingRadius(1).
     -task(1999, _, _, _, _);
     check_position(pos(X+2,0,Z+2));
     if(position(valid)){
-      !add_task(task(3000, "TASK_GOTO_POSITION", A, pos(X+2, 0, Z+2), ""));
+      !add_task(task(2000, "TASK_GOTO_POSITION", A, pos(X+2, 0, Z+2), ""));
     }
     else{
-      !add_task(task(3000, "TASK_GOTO_POSITION", A, pos(X, 0, Z), ""));
+      !add_task(task(2000, "TASK_GOTO_POSITION", A, pos(X, 0, Z), ""));
     }
   }.
     
@@ -382,11 +400,12 @@ patrollingRadius(1).
   .my_name(A);
   
   if( .substring("TM1", A) ){
-    -+objective(240, 0, 215);
+  	!add_task ( task ( 1999 , "TASK_PATROLLING" , A , pos(120, 0, 210), "" ) ) ;
+    -+objective(120, 0, 210);
     +subteam(1);
   }
   if( .substring("TM2", A) ){
-    -+objective(240, 0, 235);
+    -+objective(210, 0, 210);
     +subteam(2);
   }.  
 

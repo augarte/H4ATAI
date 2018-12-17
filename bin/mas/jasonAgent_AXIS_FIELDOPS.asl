@@ -193,6 +193,25 @@ patrollingRadius(1).
           ?my_position(Xm, Ym, Zm);
           .concat("sigueme(",Sub, ", ", Xm, ", ", Zm, ")", Content2);
           .send_msg_with_conversation_id(A2, tell, Content2, "INT");
+        }else{
+        ?my_ammo_threshold(At2);
+       	?my_ammo(Ar2);
+        	if(At < At2 & Ar == Ar2){
+        		.println("ENEMIGO ALREDEDOR !!!!!!!!!!!!");
+            ?my_position(mX, mY, mZ);
+        	!add_task ( task ( 2999 , "TASK_PATROLLING" , M , pos(mX, mY, mZ), "" ) ) ;
+        	}else{
+        		  if( war(false) ){
+          	-+war(true);
+          }else{
+          	.my_name(M);
+          	if( .substring("TF1", M) ){
+			!add_task ( task ( 1999 , "TASK_PATROLLING" , M , pos(45, 0, 210), "" ) ) ;
+    	 	-+objective(55, 0, 200);
+    		 }
+    		
+          }
+        	}
         }
         -+contador(Cont+1);
       }
@@ -377,11 +396,12 @@ patrollingRadius(1).
   .my_name(A);
   
   if( .substring("TF1", A) ){
-    -+objective(245, 0, 210);
+  	!add_task ( task ( 1999 , "TASK_PATROLLING" , A , pos(120, 0, 210), "" ) ) ;
+    -+objective(125, 0, 210);
     +subteam(1);
   }
   if( .substring("TF2", A) ){
-    -+objective(245, 0, 240);
+    -+objective(210, 0, 210);
     +subteam(2);
   }.  
 
